@@ -74,12 +74,12 @@ $(document).ready(function() {
 
     $textarea
       .focus()
-      .val($it.text())
+      .val($it.html())
   });
 
   $(".page.content").on("blur", "textarea", function() {
     var $it = $(this);
-    var $p = $("<p>").text($it.val())
+    var $p = $("<p>").html($it.val())
     $it.replaceWith($p);
     updatePage();
   });
