@@ -51,12 +51,28 @@ $(document).ready(function() {
     change: updatePage
   });
 
-  //$(".content p").on("click", function() {
-  //  var $it = $(this);
-  //  var text = $it.text();
-  //  var $textarea = $("<textarea>").attr("val", text);
-  //  $it.replaceWith($textarea);
-  //  });
+  $(".page.content").on("click", "p", function() {
+    var $it = $(this);
+    var $textarea = $("<textarea>")
+      .attr("rows", 12)
+      .css({
+        width: "100%"
+      });
+
+    $it.replaceWith($textarea);
+
+    $textarea
+      .focus()
+      .val($it.text())
+  });
+
+  $(".page.content").on("blur", "textarea", function() {
+    var $it = $(this);
+    var $p = $("<p>").text($it.val())
+    $it.replaceWith($p);
+    updatePage();
+  });
+
   $("#scraper").on("change", function() {
     $.get("/scrape/"+$(this).val(), function(data) {
       $(".imports .meta h2").text(data.title);
@@ -77,7 +93,6 @@ $(document).ready(function() {
     onChange: function(value) {
       if (value === "") return;
       if (typeof pages[value] === "undefined") pages[value] = { content: "" };
-      console.log(pages[value].content);
       $(".page.content").html(pages[value].content);
     }
   });
