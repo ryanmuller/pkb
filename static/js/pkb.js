@@ -87,8 +87,9 @@ $(document).ready(function() {
   $("#scraper").on("change", function() {
     $.get("/scrape/"+$(this).val(), function(data) {
       $(".imports .meta h2").text(data.title);
-      $(".imports .meta p").text(data.url);
+      $(".imports .meta p.url").text(data.url);
       $(".import.content").html(contentToHTML(data.content));
+      $(".import.content").prepend($("<p>").append($("<img>").attr("src", data.image)));
     });
   });
   $("#scraper").val("http://en.wikipedia.org/wiki/Great_Barrier_Reef");

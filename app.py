@@ -23,6 +23,7 @@ def scrape(url):
 
     return { 'url': url,
              'title': a.title,
+             'image': a.top_image,
              'content': a.text,
              'content_html': a.article_html }
 
