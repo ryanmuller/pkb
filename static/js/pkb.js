@@ -85,9 +85,10 @@ $(document).ready(function() {
   });
 
   $("#scraper").on("change", function() {
+    $(".imports .meta h2").text("loading...");
     $.get("/scrape/"+$(this).val(), function(data) {
       $(".imports .meta h2").text(data.title);
-      $(".imports .meta p.url").text(data.url);
+      $(".imports .meta a").text(data.url).attr("href", data.url);
       $(".import.content").html(contentToHTML(data.content));
       $(".import.content").prepend($("<p>").append($("<img>").attr("src", data.image)));
     });
