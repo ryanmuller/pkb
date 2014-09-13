@@ -1,4 +1,9 @@
-from bottle import route, run, static_file
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from sys import argv
+
+import bottle
+from bottle import route, static_file
 from newspaper import Article
 
 @route('/')
@@ -25,4 +30,4 @@ def scrape(url):
 def hello():
     return "Hello World!"
 
-run(host='localhost', port=8080, debug=True)
+bottle.run(host='0.0.0.0', port=argv[1])
