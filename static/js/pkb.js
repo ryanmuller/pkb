@@ -1,4 +1,5 @@
 var pages = {
+  home: { content: "<h1>Home</h1><p>Welcome to my knowledge base.</p>" },
   reef: { content: "<h1>Reef</h1>" },
   australia: { content: "<h1>Australia</h1>" },
   fish: { content: "<h1>Fish</h1>" },
@@ -80,4 +81,6 @@ $(document).ready(function() {
       $(".page.content").html(pages[value].content);
     }
   });
+  $("#pager")[0].selectize.setValue("home");
+
 });
