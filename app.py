@@ -19,16 +19,11 @@ def scrape(url):
     a = Article(url, keep_article_html=True)
     a.download()
     a.parse()
-    #a.nlp()
 
     return { 'url': url,
              'title': a.title,
              'image': a.top_image,
              'content': a.text,
              'content_html': a.article_html }
-
-@route('/hello')
-def hello():
-    return "Hello World!"
 
 bottle.run(host='0.0.0.0', port=argv[1])
