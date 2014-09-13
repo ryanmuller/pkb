@@ -19,7 +19,7 @@ var updatePage = function() {
 };
 
 var loadFromLocalStorage = function() {
-  if (typeof localStorage["pages"] === undefined) {
+  if (typeof localStorage["pages"] === "undefined") {
     pages = {
       home: { content: "<h1>Home</h1><p>Welcome to my knowledge base.</p>" },
       reef: { content: "<h1>Reef</h1>" },
