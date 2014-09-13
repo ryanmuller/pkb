@@ -1,9 +1,4 @@
-var pages = {
-  home: { content: "<h1>Home</h1><p>Welcome to my knowledge base.</p>" },
-  reef: { content: "<h1>Reef</h1>" },
-  australia: { content: "<h1>Australia</h1>" },
-  fish: { content: "<h1>Fish</h1>" },
-};
+var pages = {};
 
 var pageOptions = function() {
   return _.map(Object.keys(pages), function(pageName) {
@@ -20,9 +15,25 @@ var contentToHTML = function(content) {
 var updatePage = function() {
   var currentPageName = $("#pager").val();
   pages[currentPageName].content = $(".page.content").html();
+  localStorage["pages"] = JSON.stringify(pages);
+};
+
+var loadFromLocalStorage = function() {
+  if (typeof localStorage["pages"] === undefined) {
+    pages = {
+      home: { content: "<h1>Home</h1><p>Welcome to my knowledge base.</p>" },
+      reef: { content: "<h1>Reef</h1>" },
+      australia: { content: "<h1>Australia</h1>" },
+      fish: { content: "<h1>Fish</h1>" }
+    };
+  } else {
+    pages = JSON.parse(localStorage["pages"]);
+  }
 };
 
 $(document).ready(function() {
+  loadFromLocalStorage();
+
   $(".import.content").sortable({
     forcePlaceholderSize: true,
     placeholder: "ui-state-highlight",
