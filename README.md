@@ -26,20 +26,24 @@ Eventually we may want to allow database storage for cloud hosting.
 Wiki](https://github.com/WardCunningham/Smallest-Federated-Wiki)) is to
 interpret page data as a sequence of components. The most basic
 component is an editable text block, while others could be interactive
-widgets. Using a brand new type of component should be as easy as
-downloading a js file to your app and specifying the correct metadata.
+widgets. Using a brand new type of component is as easy as downloading a
+js file to your app and specifying the correct metadata.
 
 **Replication over reference.** Unfortunately URLs and API formats are
 unreliable. We favor locally replicating data whenever possible.
+Combined with flat file storage, this allows full or partial pkbs to be
+replicated regardless of platform or online connectivity.
 
 **Ubiquitous import.** We provide a web and PDF scraping API for turning
-any site on the web into a set of text block components. This should be
-fast and able to capture media.
+any site on the web into a set of text block components. Scraping is
+fast and captures media. Importing features are extensible, allowing end
+users to write custom scrapers for structured data, such as Wikipedia
+pages.
 
 **Powerful collaboration.** Any pkb page can be copied with the web
-scraping tools. But we want to enable stronger collaborate with other
-pkb instances via identical replication of components. We can achieve
-this either with an API or by adding data attributes to the DOM.
+scraping tools. But we enable stronger collaborate with other pkb
+instances via identical replication of components. We can achieve this
+either with an API or by adding data attributes to the DOM.
 
 **Smart, eager assistance.** The interface creates opportunities for
 searching, organizating, and forming connections by using natural
