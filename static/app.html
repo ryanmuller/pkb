@@ -1,0 +1,48 @@
+<head>
+  <script src="/assets/js/jquery-1.11.1.min.js"></script>
+  <script src="/assets/js/jquery-ui.min.js"></script>
+  <script src="/assets/js/underscore-min.js"></script>
+  <script src="/assets/js/selectize.min.js"></script>
+  <script src="/assets/js/pkb.js"></script>
+  <link rel="stylesheet" type="text/css" href="/assets/css/selectize.default.css">
+
+
+<style>
+.page.content {
+  min-height: 200px;
+}
+
+.column {
+  padding: 10px;
+  width: 430px;
+  height: 100%;
+  overflow: auto;
+  float: left;
+}
+
+.ui-state-highlight {
+  border: 2px dotted #ccc;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="imports column">
+  <label for="scraper">Website URL</label>
+  <input id="scraper" type="text" placeholder="http://" size="40" />
+  <div class="meta">
+    <h2>none</h2>
+    <p>none</p>
+  </div>
+  <div class="import content"></div>
+</div>
+<div class="pages column">
+  <label for="pager">Page</label>
+  <select id="pager"></select>
+  <div class="page content">
+    <p>No page loaded.</p>
+  </div>
+</div>
+</body>
