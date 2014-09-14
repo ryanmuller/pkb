@@ -10,6 +10,10 @@ from newspaper import Article
 def root():
     return static_file("app.html", root="./static/")
 
+@route('/page/<name>')
+def page(name):
+    return static_file("app.html", root="./static/")
+
 @route('/assets/<filepath:path>')
 def asset(filepath):
     return static_file(filepath, root="./static/")

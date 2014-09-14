@@ -107,8 +107,13 @@ $(document).ready(function() {
       if (value === "") return;
       if (typeof pages[value] === "undefined") pages[value] = { content: "" };
       $(".page.content").html(pages[value].content);
+      history.pushState({}, "", "/page/"+value);
     }
   });
-  $("#pager")[0].selectize.setValue("home");
 
+  if (window.location.pathname.split("/")[1] == "page") {
+    $("#pager")[0].selectize.setValue(window.location.pathname.split("/")[2]);
+  } else {
+    $("#pager")[0].selectize.setValue("home");
+  }
 });
