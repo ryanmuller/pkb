@@ -2,7 +2,7 @@
   min-height: 200px;
 }
 
-.column {
+section {
   padding: 10px;
   width: 430px;
   height: 100%;
@@ -17,4 +17,17 @@
 .content img {
   max-width: 100%;
   max-height: 300px;
+}
+
+.col {
+  float: left;
+  position: relative;
+}
+
+.x50 {
+  width: 50%;
+}
+
+.x100 {
+  width: 100%;
 }

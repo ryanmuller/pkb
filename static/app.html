@@ -10,18 +10,24 @@
 
 <body>
 
-<div class="imports column">
-  <label for="scraper">Website URL</label>
-  <input id="scraper" type="text" placeholder="http://" size="40" />
+<section class="imports">
+  <label for="scraper">Import</label>
+  <input id="scraper" type="text" placeholder="http://" class="x100" />
   <div class="meta">
     <h2>loading...</h2>
     <a></a>
   </div>
   <div class="import content"></div>
 </div>
-<div class="pages column">
-  <label for="pager">Page</label>
-  <select id="pager"></select>
+<section class="pages">
+  <div class="col x100">
+    <div class="col x50">
+      <select id="pager"></select>
+    </div>
+    <div class="col x50">
+      <input id="searcher" type="text" placeholder="search">
+    </div>
+  </div>
   <div class="page content">
     <p>No page loaded.</p>
   </div>

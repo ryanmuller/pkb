@@ -1,5 +1,17 @@
 var pages = {};
 
+// call this instead of goToPage..?
+var setPage = function(name) {
+  //$("#pager")[0].selectize.setValue(name);
+};
+
+var goToPage = function(name) {
+  if (name === "") return;
+  if (typeof pages[name] === "undefined") pages[name] = { content: "" };
+  $(".page.content").html(pages[name].content);
+  history.pushState({}, "", "/page/"+name);
+};
+
 var pageOptions = function() {
   return _.map(Object.keys(pages), function(pageName) {
     return { text: pageName, value: pageName };
@@ -103,17 +115,33 @@ $(document).ready(function() {
     load: function(query, callback) {
       callback(pageOptions());
     },
-    onChange: function(value) {
-      if (value === "") return;
-      if (typeof pages[value] === "undefined") pages[value] = { content: "" };
-      $(".page.content").html(pages[value].content);
-      history.pushState({}, "", "/page/"+value);
-    }
+    onChange: goToPage
   });
 
-  if (window.location.pathname.split("/")[1] == "page") {
-    $("#pager")[0].selectize.setValue(window.location.pathname.split("/")[2]);
+  if (window.location.pathname.split("/")[1] === "page") {
+    goToPage(window.location.pathname.split("/")[2]);
   } else {
-    $("#pager")[0].selectize.setValue("home");
+    goToPage("home");
   }
+
+  $("#searcher").on("change", function() {
+    var term = $(this).val();
+    if (term === "") return;
+    var name = "search:"+term;
+    var res = _.map(_.filter(_.pairs(pages), function(name_page) {
+      return name_page[0].indexOf(":") === -1 && name_page[1].content.indexOf(term) !== -1;
+    }), function(name_page) {
+      var name = name_page[0],
+          page = name_page[1],
+          pageRes = _.map(_.filter($(page.content), function(el) {
+            return $(el).text().indexOf(term) !== -1;
+          }), function(el) {
+            return "<p>" + $(el).html() + "</p>";
+          });
+      return "<p>Results in <a href=\"/page/" + name + "\">" + name + "</a>:</p>" + pageRes;
+    }).join("");
+    pages[name] = {};
+    pages[name].content = res;
+    goToPage(name);
+  });
 });
