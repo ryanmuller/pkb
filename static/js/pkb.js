@@ -1,4 +1,4 @@
-var pages, imports, latest;
+var pages, imports, visited;
 
 var goToPageByPath = function(path) {
   goToPage(_.last(path.split("/")));
@@ -9,26 +9,25 @@ var goToPage = function(name) {
   if (typeof pages[name] === "undefined") pages[name] = { content: "" };
   $(".page.content").html(pages[name].content);
   history.pushState({}, "", "/page/"+name);
-  updateLatest(name);
+  updateVisited(name);
 };
 
 var showLatest = function() {
   $("#latest").empty();
-  _.each(latest, function(name) {
+  _.each(_.last(_.uniq(visited), 5), function(name) {
     $link = $("<a>").attr("href", "/page/"+name).text(name);
     $("#latest").append($link);
   });
 }
 
-var updateLatest = function(name) {
-  if (typeof localStorage["latest"] === "undefined") {
-    latest = [];
+var updateVisited = function(name) {
+  if (typeof localStorage["visited"] === "undefined") {
+    visited = [];
   } else {
-    latest = JSON.parse(localStorage["latest"]);
+    visited = JSON.parse(localStorage["visited"]);
   }
-  if (latest.length > 4) latest.pop();
-  latest.unshift(name);
-  localStorage["latest"] = JSON.stringify(latest);
+  visited.unshift(name);
+  localStorage["visited"] = JSON.stringify(visited);
   showLatest();
 }
 
