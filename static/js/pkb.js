@@ -7,6 +7,7 @@ var goToPageByPath = function(path) {
 var goToPage = function(name) {
   if (name === "") return;
   if (typeof pages[name] === "undefined") pages[name] = { content: "" };
+  $(".pages h1").text(name);
   $(".page.content").html(pages[name].content);
   history.pushState({}, "", "/page/"+name);
   updateVisited(name);
