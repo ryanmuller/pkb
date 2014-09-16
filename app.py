@@ -20,6 +20,10 @@ from pdfminer.layout import LAParams
 def root():
     return static_file("app.html", root="./static/")
 
+@route('/import')
+def import_extract():
+    return static_file("app.html", root="./static/")
+
 @route('/page/<name>')
 def page(name):
     return static_file("app.html", root="./static/")

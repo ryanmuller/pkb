@@ -9,27 +9,33 @@
 </head>
 
 <body>
-
-<section class="imports">
-  <label for="scraper">Import</label>
-  <input id="scraper" type="text" placeholder="http://" class="x100" />
-  <div class="meta">
-    <h2>loading...</h2>
-    <a></a>
-  </div>
-  <div class="import content"></div>
-</div>
-<section class="pages">
-  <div class="col x100">
-    <div class="col x50">
-      <select id="pager"></select>
+  <nav>
+    <header><h1>pkb</h1></header>
+    <button id="goImport">Import</button>
+    <button id="goRecent">Recent</button>
+    <input id="searcher" type="text" placeholder="search">
+  </nav>
+  <section class="recent">
+    <h1>Recent imports</h1>
+    <div class="content">
     </div>
-    <div class="col x50">
-      <input id="searcher" type="text" placeholder="search">
+  </section>
+  <section class="imports">
+    <h1>Import from URL</h1>
+    <label for="scraper">Import</label>
+    <input id="scraper" type="text" placeholder="http://" class="x100" />
+    <div class="meta">
     </div>
-  </div>
-  <div class="page content">
-    <p>No page loaded.</p>
-  </div>
-</div>
+    <div class="import content"></div>
+  </section>
+  <section class="pages">
+    <div class="col x100">
+      <div class="col x100">
+        <select id="pager"></select>
+      </div>
+    </div>
+    <div class="page content">
+      <p>No page loaded.</p>
+    </div>
+  </section>
 </body>

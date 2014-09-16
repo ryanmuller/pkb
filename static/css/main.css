@@ -31,3 +31,7 @@ section {
 .x100 {
   width: 100%;
 }
+
+.extract h1 {
+  font-size: 1em;
+}
