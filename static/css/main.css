@@ -47,3 +47,12 @@ section {
 #latest a {
   margin: 0 5px;
 }
+
+header {
+  display: inline;
+}
+
+header h1 {
+  display: inline;
+  margin-right: 10px;
+}
