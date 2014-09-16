@@ -1,9 +1,8 @@
 var pages, imports, latest;
 
-// call this instead of goToPage..?
-var setPage = function(name) {
-  $("#pager")[0].selectize.setValue(name);
-};
+var goToPageByPath = function(path) {
+  goToPage(_.last(path.split("/")));
+}
 
 var goToPage = function(name) {
   if (name === "") return;
@@ -22,7 +21,11 @@ var showLatest = function() {
 }
 
 var updateLatest = function(name) {
-  if (typeof latest === "undefined") latest = [];
+  if (typeof localStorage["latest"] === "undefined") {
+    latest = [];
+  } else {
+    latest = JSON.parse(localStorage["latest"]);
+  }
   if (latest.length > 4) latest.pop();
   latest.unshift(name);
   localStorage["latest"] = JSON.stringify(latest);
@@ -41,8 +44,8 @@ var contentToHTML = function(content) {
   }).join("");
 };
 
-var updatePage = function() {
-  var currentPageName = $("#pager").val();
+var updatePage = function(name) {
+  var currentPageName = _.last(location.pathname.split("/"))
   pages[currentPageName].content = $(".page.content").html();
   localStorage["pages"] = JSON.stringify(pages);
 };
@@ -198,20 +201,16 @@ $(document).ready(function() {
   $("#scraper").change();
 
 
-  $("#pager").selectize({
-    create: true,
-    options: pageOptions(),
-    load: function(query, callback) {
-      callback(pageOptions());
-    },
-    onChange: goToPage
-  });
-
   if (window.location.pathname.split("/")[1] === "page") {
-    setPage(window.location.pathname.split("/")[2]);
+    goToPageByPath(window.location.pathname);
   } else {
-    setPage("home");
+    goToPage("home");
   }
+
+  $(document).on("click", "a[href^='/']", function(e) {
+    e.preventDefault();
+    goToPageByPath($(this).attr("href"));
+  });
 
   $("#searcher").on("change", function() {
     var term = $(this).val();
