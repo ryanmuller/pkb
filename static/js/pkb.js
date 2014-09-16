@@ -139,7 +139,7 @@ $(document).ready(function() {
     }
   });
 
-  $(".import.content").sortable({
+  $(".imports .content").sortable({
     forcePlaceholderSize: true,
     placeholder: "ui-state-highlight",
     connectWith: ".content",
@@ -161,6 +161,10 @@ $(document).ready(function() {
     forcePlaceholderSize: true,
     placeholder: "ui-state-highlight",
     receive: function (e, ui) {
+      if (ui.sender.parent().hasClass("recent")) {
+        $inner_p = ui.item.find("p");
+        ui.item.empty().append($inner_p);
+      }
       ui.sender.data('copied', true);
       updatePage();
     },
