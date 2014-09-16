@@ -92,16 +92,16 @@ $(document).ready(function() {
   loadFromLocalStorage();
   handleImports();
   showImports();
-  $(".recent").hide();
+  $("section:not(.pages)").hide();
 
   $("#goImport").on("click", function() {
-    $(".recent").hide();
+    $("section:not(.pages)").hide();
     $(".imports").show();
   });
 
   $("#goRecent").on("click", function() {
+    $("section:not(.pages)").hide();
     $(".recent").show();
-    $(".imports").hide();
   });
 
   $(".recent .content").sortable({
@@ -214,6 +214,8 @@ $(document).ready(function() {
     }).join("");
     pages[name] = {};
     pages[name].content = res;
-    setPage(name);
+    $("section:not(.pages)").hide();
+    $("section.results").show();
+    $("section.results").html(res);
   });
 });
