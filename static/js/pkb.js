@@ -33,7 +33,7 @@ var updateVisited = function(name) {
 
 var pageOptions = function() {
   return _.map(Object.keys(pages), function(pageName) {
-    return { text: pageName, value: pageName };
+    return { text: pageName, id: pageName };
   });
 };
 
@@ -209,6 +209,10 @@ $(document).ready(function() {
   $(document).on("click", "a[href^='/']", function(e) {
     e.preventDefault();
     goToPageByPath($(this).attr("href"));
+  });
+
+  $("#searcher").select2({
+    data: function() { return { results: pageOptions() }}
   });
 
   $("#searcher").on("change", function() {
