@@ -1,4 +1,4 @@
-var pages, imports;
+var pages, imports, latest;
 
 // call this instead of goToPage..?
 var setPage = function(name) {
@@ -10,7 +10,24 @@ var goToPage = function(name) {
   if (typeof pages[name] === "undefined") pages[name] = { content: "" };
   $(".page.content").html(pages[name].content);
   history.pushState({}, "", "/page/"+name);
+  updateLatest(name);
 };
+
+var showLatest = function() {
+  $("#latest").empty();
+  _.each(latest, function(name) {
+    $link = $("<a>").attr("href", "/page/"+name).text(name);
+    $("#latest").append($link);
+  });
+}
+
+var updateLatest = function(name) {
+  if (typeof latest === "undefined") latest = [];
+  if (latest.length > 4) latest.pop();
+  latest.unshift(name);
+  localStorage["latest"] = JSON.stringify(latest);
+  showLatest();
+}
 
 var pageOptions = function() {
   return _.map(Object.keys(pages), function(pageName) {
@@ -92,7 +109,7 @@ $(document).ready(function() {
   loadFromLocalStorage();
   handleImports();
   showImports();
-  $("section:not(.pages)").hide();
+  $("section:not(.pages,.recent)").hide();
 
   $("#goImport").on("click", function() {
     $("section:not(.pages)").hide();

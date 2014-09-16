@@ -35,3 +35,11 @@ section {
 .extract h1 {
   font-size: 1em;
 }
+
+#latest {
+  display: inline-block;
+}
+
+#latest a {
+  margin: 0 5px;
+}
