@@ -6,11 +6,47 @@ var goToPageByPath = function(path) {
 
 var goToPage = function(name) {
   if (name === "") return;
-  if (typeof pages[name] === "undefined") pages[name] = { content: "" };
-  $(".pages h1").text(_.capitalize(name));
-  $(".page.content").html(pages[name].content);
-  history.pushState({}, "", "/page/"+name);
-  updateVisited(name);
+
+  if (name.match(/^search:/) !== null) {
+    doSearch(name.replace(/^search:/, ""));
+    return;
+  } else {
+    if (typeof pages[name] === "undefined") {
+      pages[name] = { content: "" };
+      doSearch(name.replace(/_/g, " "));
+    }
+    $(".pages h1").text(_.capitalize(name.replace(/_/g, " ")));
+    $(".page.content").html(pages[name].content);
+    history.pushState({}, "", "/page/"+name);
+    updateVisited(name);
+  }
+};
+
+var doSearch = function(term) {
+  var pagesRes = _.map(_.filter(_.pairs(pages), function(name_page) {
+    return name_page[0].indexOf(":") === -1 && name_page[1].content.indexOf(term) !== -1;
+  }), function(name_page) {
+    var name = name_page[0],
+        page = name_page[1],
+        pageRes = _.map(_.filter($(page.content), function(el) {
+          return $(el).text().indexOf(term) !== -1;
+        }), function(el) {
+          return "<p>" + $(el).html() + "</p>";
+        });
+    return "<h2>Results in <a href=\"/page/" + name + "\">" + name + "</a>:</h2>" + pageRes;
+  }).join("");
+
+  var importsRes = _.map(_.filter(imports, function(imp) {
+    return imp.title.indexOf(term) !== -1 || imp.extract.indexOf(term) !== -1;
+  }), function(imp) {
+    return "<h2>Results from <a href=\"" + imp.source + "\">" + imp.title + "</a>:</h2>" + imp.extract;
+  }).join("");
+
+  var res = pagesRes + importsRes;
+
+  $("section:not(.pages)").hide();
+  $("section.results").show();
+  $("section.results").html(res);
 };
 
 var showLatest = function() {
@@ -101,7 +137,7 @@ var handleImports = function() {
 
 var showImports = function() {
   _.each(imports, function(imported) {
-    $title = $("<h1>").text(imported.title);
+    $title = $("<h2>").text(imported.title);
     $extract = $("<p>").html(imported.extract);
     $source = $("<a>").attr("href",imported.source).text("Source");
     $("<div>").addClass("extract").append($title).append($extract).append($source).appendTo($(".recent .content"));
@@ -222,37 +258,15 @@ $(document).ready(function() {
         return this.text.localeCompare(term)===0;
       }).length===0) {
         return {id:term, text:term};
+      } else {
+        return { id: "search:"+term, text: "search:"+term };
       }
     },
     data: function() { return { results: pageOptions() }}
   });
 
   $("#searcher").on("change", function() {
-    var term = $(this).val();
-
-    if (term === "") return;
-    if (term in pages) {
-      goToPage(term);
-      return;
-    }
-
-    var name = "search:"+term;
-    var res = _.map(_.filter(_.pairs(pages), function(name_page) {
-      return name_page[0].indexOf(":") === -1 && name_page[1].content.indexOf(term) !== -1;
-    }), function(name_page) {
-      var name = name_page[0],
-          page = name_page[1],
-          pageRes = _.map(_.filter($(page.content), function(el) {
-            return $(el).text().indexOf(term) !== -1;
-          }), function(el) {
-            return "<p>" + $(el).html() + "</p>";
-          });
-      return "<p>Results in <a href=\"/page/" + name + "\">" + name + "</a>:</p>" + pageRes;
-    }).join("");
-    pages[name] = {};
-    pages[name].content = res;
-    $("section:not(.pages)").hide();
-    $("section.results").show();
-    $("section.results").html(res);
+    var term = $(this).val().replace(/\s/g, "_");
+    goToPage(term);
   });
 });
