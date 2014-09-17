@@ -7,7 +7,7 @@ var goToPageByPath = function(path) {
 var goToPage = function(name) {
   if (name === "") return;
   if (typeof pages[name] === "undefined") pages[name] = { content: "" };
-  $(".pages h1").text(name);
+  $(".pages h1").text(_.capitalize(name));
   $(".page.content").html(pages[name].content);
   history.pushState({}, "", "/page/"+name);
   updateVisited(name);
@@ -53,10 +53,10 @@ var updatePage = function(name) {
 var loadFromLocalStorage = function() {
   if (typeof localStorage["pages"] === "undefined") {
     pages = {
-      home: { content: "<h1>Home</h1><p>Welcome to my knowledge base.</p>" },
-      reef: { content: "<h1>Reef</h1>" },
-      australia: { content: "<h1>Australia</h1>" },
-      fish: { content: "<h1>Fish</h1>" }
+      home: { content: "<p>Welcome to my knowledge base.</p>" },
+      reef: { content: "<p>A reef is a rock, sandbar, or other feature lying beneath the surface of the water (80 meters or less beneath low water).</p>" },
+      australia: { content: "<p>Australia, officially the Commonwealth of Australia, is a country comprising the mainland of the Australian continent, the island of Tasmania, and numerous smaller islands. It is the world's sixth-largest country by total area. Neighbouring countries include Indonesia, East Timor and Papua New Guinea to the north; the Solomon Islands and Vanuatu to the north-east; and New Zealand to the south-east.</p>" },
+      fish: { content: "<p>A fish is any member of a paraphyletic group of organisms that consist of all gill-bearing aquatic craniate animals that lack limbs with digits.</p>" }
     };
   } else {
     pages = JSON.parse(localStorage["pages"]);
