@@ -51,7 +51,7 @@ var doSearch = function(term) {
 
 var showLatest = function() {
   $("#latest").empty();
-  _.each(_.last(_.uniq(visited), 5), function(name) {
+  _.each(_.first(_.uniq(visited), 5), function(name) {
     $link = $("<a>").attr("href", "/page/"+name).text(name);
     $("#latest").append($link);
   });
