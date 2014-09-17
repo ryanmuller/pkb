@@ -172,7 +172,7 @@ $(document).ready(function() {
     change: updatePage
   });
 
-  $(".page.content").on("click", "p", function() {
+  $(".page.content").on("click", "> *", function() {
     var $it = $(this);
     var $textarea = $("<textarea>")
       .attr("rows", 12)
