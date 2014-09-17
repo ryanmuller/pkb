@@ -217,12 +217,25 @@ $(document).ready(function() {
   });
 
   $("#searcher").select2({
+    createSearchChoice: function(term, data) {
+      if ( $(data).filter( function() {
+        return this.text.localeCompare(term)===0;
+      }).length===0) {
+        return {id:term, text:term};
+      }
+    },
     data: function() { return { results: pageOptions() }}
   });
 
   $("#searcher").on("change", function() {
     var term = $(this).val();
+
     if (term === "") return;
+    if (term in pages) {
+      goToPage(term);
+      return;
+    }
+
     var name = "search:"+term;
     var res = _.map(_.filter(_.pairs(pages), function(name_page) {
       return name_page[0].indexOf(":") === -1 && name_page[1].content.indexOf(term) !== -1;
