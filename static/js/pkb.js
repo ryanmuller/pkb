@@ -1,8 +1,39 @@
 var pages, imports, visited;
 
-var goToPageByPath = function(path) {
-  goToPage(_.last(path.split("/")));
-}
+var storePages = function() {
+  localStorage["pages"] = JSON.stringify(pages);
+};
+
+var nodeToHTML = function(node) {
+  return "<div id="+md5(node)+">"+markdown.toHTML(node)+"</div>";
+};
+
+var contentToHTML = function(content) {
+  return _.map(content, nodeToHTML).join("");
+};
+
+var contentToChunks = function(content) {
+  return _.map(content.split("\n\n"), function(par) {
+    return "<p>"+par+"</p>";
+  }).join("");
+};
+
+var updateNthNode = function(n, text) {
+  pages[currentPageName()].content[n] = text;
+  storePages();
+  return pages[currentPageName()].content[n];
+};
+
+var insertNode = function(n, text) {
+  pages[currentPageName()].content.splice(n, 0, text);
+  storePages();
+  return pages[currentPageName()].content[n];
+};
+
+var displayPage = function(name) {
+  $(".pages h1").text(_.capitalize(name.replace(/_/g, " ")));
+  $(".page.content").html(contentToHTML(pages[name].content));
+};
 
 var goToPage = function(name) {
   if (name === "") return;
@@ -12,15 +43,19 @@ var goToPage = function(name) {
     return;
   } else {
     if (typeof pages[name] === "undefined") {
-      pages[name] = { content: "" };
-      doSearch(name.replace(/_/g, " "));
+      pages[name] = { content: ["Write *something* about "+name+"."] };
+      //doSearch(name.replace(/_/g, " "));
     }
-    $(".pages h1").text(_.capitalize(name.replace(/_/g, " ")));
-    $(".page.content").html(pages[name].content);
+    displayPage(name);
     history.pushState({}, "", "/page/"+name);
     updateVisited(name);
   }
 };
+
+var goToPageByPath = function(path) {
+  goToPage(_.last(path.split("/")));
+};
+
 
 var doSearch = function(term) {
   var pagesRes = _.map(_.filter(_.pairs(pages), function(name_page) {
@@ -74,25 +109,17 @@ var pageOptions = function() {
   });
 };
 
-var contentToHTML = function(content) {
-  return _.map(content.split("\n\n"), function(par) {
-    return "<p>"+par+"</p>";
-  }).join("");
-};
-
-var updatePage = function(name) {
-  var currentPageName = _.last(location.pathname.split("/"))
-  pages[currentPageName].content = $(".page.content").html();
-  localStorage["pages"] = JSON.stringify(pages);
+var currentPageName = function() {
+  return _.last(location.pathname.split("/"));
 };
 
 var loadFromLocalStorage = function() {
   if (typeof localStorage["pages"] === "undefined") {
     pages = {
-      home: { content: "<p>Welcome to my knowledge base.</p>" },
-      reef: { content: "<p>A reef is a rock, sandbar, or other feature lying beneath the surface of the water (80 meters or less beneath low water).</p>" },
-      australia: { content: "<p>Australia, officially the Commonwealth of Australia, is a country comprising the mainland of the Australian continent, the island of Tasmania, and numerous smaller islands. It is the world's sixth-largest country by total area. Neighbouring countries include Indonesia, East Timor and Papua New Guinea to the north; the Solomon Islands and Vanuatu to the north-east; and New Zealand to the south-east.</p>" },
-      fish: { content: "<p>A fish is any member of a paraphyletic group of organisms that consist of all gill-bearing aquatic craniate animals that lack limbs with digits.</p>" }
+      home: { content: [ "Welcome to my `personal knowledge base`." ] },
+      reef: { content: [ "A reef is a rock, sandbar, or other feature lying beneath the surface of the water (80 meters or less beneath low water)." ] },
+      australia: { content: [ "Australia, officially the Commonwealth of Australia, is a country comprising the mainland of the Australian continent, the island of Tasmania, and numerous smaller islands. It is the world's sixth-largest country by total area. Neighbouring countries include Indonesia, East Timor and Papua New Guinea to the north; the Solomon Islands and Vanuatu to the north-east; and New Zealand to the south-east." ] },
+      fish: { content: [ "A fish is any member of a paraphyletic group of organisms that consist of all gill-bearing aquatic craniate animals that lack limbs with digits." ] }
     };
   } else {
     pages = JSON.parse(localStorage["pages"]);
@@ -198,17 +225,27 @@ $(document).ready(function() {
     forcePlaceholderSize: true,
     placeholder: "ui-state-highlight",
     receive: function (e, ui) {
-      if (ui.sender.parent().hasClass("recent")) {
-        $inner_p = ui.item.find("p");
-        ui.item.empty().append($inner_p);
-      }
       ui.sender.data('copied', true);
-      updatePage();
+      if (ui.sender.parent().hasClass("recent")) {
+        var text = ui.item.find("p").first().text(),
+            title = ui.item.find("h2").first().text(),
+            href = ui.item.find("a").last().attr("href");
+
+        insertNode($(".page.content").children().index(ui.item),
+                   "["+title+"]("+href+"): "+text);
+      }
+      displayPage(currentPageName());
     },
-    change: updatePage
+    update: function() {
+      pages[currentPageName()].content = _.sortBy(pages[currentPageName()].content, function(page) {
+        return _.map($(".page.content").children(), function($node) { return $node.id; }).indexOf(md5(page));
+      });
+      storePages();
+      displayPage(currentPageName());
+    }
   });
 
-  $(".page.content").on("click", "> *", function() {
+  $(".page.content").on("click", "div", function() {
     var $it = $(this);
     var $textarea = $("<textarea>")
       .attr("rows", 12)
@@ -216,24 +253,27 @@ $(document).ready(function() {
         width: "100%"
       });
 
+    var pos = $(".page.content").children().index($it),
+        text = pages[currentPageName()].content[pos];
+
     $it.replaceWith($textarea);
 
     $textarea
       .focus()
-      .val($it.html())
+      .val(text);
   });
 
   $(".page.content").on("blur", "textarea", function() {
-    var $it = $(this);
-    var $p = $("<p>").html($it.val())
-    $it.replaceWith($p);
-    updatePage();
+    var $it = $(this),
+        text = $it.val();
+    updateNthNode($(".page.content").children().index($it), text);
+    displayPage(currentPageName());
   });
 
   $("#scraper").on("change", function() {
     $(".imports .meta h2").text("loading...");
     $.get("/scrape/"+$(this).val(), function(data) {
-      $(".import.content").html(contentToHTML(data.content));
+      $(".import.content").html(contentToChunks(data.content));
       $(".import.content").prepend($("<p>").append($("<img>").attr("src", data.image)));
     });
   });
