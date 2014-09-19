@@ -4,8 +4,12 @@ var storePages = function() {
   localStorage["pages"] = JSON.stringify(pages);
 };
 
+var convertLinks = function(text) {
+  return text.replace(/\[\[([^\]]+)\]\]/g, "[$1](/pages/$1)");
+};
+
 var nodeToHTML = function(node) {
-  return "<div id="+md5(node)+">"+markdown.toHTML(node)+"</div>";
+  return "<div id="+md5(node)+">"+markdown.toHTML(convertLinks(node))+"</div>";
 };
 
 var contentToHTML = function(content) {
