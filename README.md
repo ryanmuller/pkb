@@ -53,6 +53,7 @@ of them.)
 
 Next steps:
 
+- File storage.
 - Convert client to React for better code organization and faster
   rendering.
 - Convert server to Clojure. The JVM ecosystem has strong NLP libraries.
