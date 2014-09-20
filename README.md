@@ -50,3 +50,11 @@ searching, organizating, and forming connections by using natural
 language intelligence and UI affordances. (Example: automatically
 suggesting related pages and allowing components to be dragged into any
 of them.)
+
+Next steps:
+
+- Convert client to React for better code organization and faster
+  rendering.
+- Convert server to Clojure. The JVM ecosystem has strong NLP libraries.
+- Explore automation features.
+- Begin visual design.
