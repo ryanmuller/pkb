@@ -51,7 +51,7 @@ language intelligence and UI affordances. (Example: automatically
 suggesting related pages and allowing components to be dragged into any
 of them.)
 
-Next steps:
+## Next steps
 
 - File storage.
 - Convert client to React for better code organization and faster
