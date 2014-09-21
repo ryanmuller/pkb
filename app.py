@@ -46,7 +46,7 @@ def data():
 
 @route('/data/<name>', method='POST')
 def write_page(name):
-    with open(DATA_DIR+"/pages/"+name+"."+PAGE_EXT, 'w') as f:
+    with open(DATA_PATH+"/"+PAGES_DIR+"/"+name+"."+PAGE_EXT, 'w') as f:
         f.write(request.forms.get('content'))
     return "OK"
 
@@ -93,4 +93,4 @@ def scrape(url):
              'content_html': a.article_html }
 
 
-bottle.run(host='0.0.0.0', port=argv[1], server='gunicorn', workers=4)
+bottle.run(host='0.0.0.0', port=argv[1], server='gunicorn', workers=4, debug=True)
