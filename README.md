@@ -14,6 +14,30 @@ in the `pkb` directory:
 2. Run the server: `python app.py 8080`
 3. Navigate to http://localhost:8080
 
+### File storage version (experimental!!!)
+
+An experimental branch of pkb can read from and write to a directory of
+Markdown-formatted files as the data backend. Be very careful using this
+branch because it is not well tested. NOTE: Currently only the first
+block in a page saved at all!
+
+1. In the pkb directory checkout the file storage branch: `git checkout file-storage`
+2. Modify `DATA_PATH`, `PAGES_DIR`, and `PAGE_EXT` to match your system.
+3. Make sure that you server process has permission to write to these
+   files. For example, my files are writeable by the `_www` user, so I
+   run the app as that user
+
+   ```
+   sudo -u _www python app.py 8080
+   ```
+
+   Make sure the static files are all readable too (since the owner may now
+   be different):
+
+   ```
+   sudo chmod -R a+r static/
+   ```
+
 ## Roadmap
 
 **Flexible storage.** By default, we store in flat files with a metadata
