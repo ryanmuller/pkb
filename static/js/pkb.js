@@ -229,15 +229,19 @@ $(document).ready(function() {
     forcePlaceholderSize: true,
     placeholder: "ui-state-highlight",
     receive: function (e, ui) {
+      var text, title, href;
       ui.sender.data('copied', true);
       if (ui.sender.parent().hasClass("recent")) {
-        var text = ui.item.find("p").first().text(),
-            title = ui.item.find("h2").first().text(),
-            href = ui.item.find("a").last().attr("href");
-
-        insertNode($(".page.content").children().index(ui.item),
-                   "["+title+"]("+href+"): "+text);
+        text = toMarkdown(ui.item.find("p").first().html());
+        title = ui.item.find("h2").first().text();
+        href = ui.item.find("a").last().attr("href");
+      } else if (ui.sender.parent().hasClass("imports")) {
+        text = toMarkdown(ui.item.html());
+        title = ui.sender.parent().find("h2").first().text();
+        href = ui.sender.parent().find("input").first().val();
       }
+      insertNode($(".page.content").children().index(ui.item),
+                 "["+title+"]("+href+"): "+text);
       displayPage(currentPageName());
     },
     update: function() {
@@ -279,6 +283,7 @@ $(document).ready(function() {
     $.get("/scrape/"+$(this).val(), function(data) {
       $(".import.content").html(contentToChunks(data.content));
       $(".import.content").prepend($("<p>").append($("<img>").attr("src", data.image)));
+      $(".import.content").prepend($("<h2>").text(data.title));
     });
   });
   $("#scraper").val("http://en.wikipedia.org/wiki/Great_Barrier_Reef");
