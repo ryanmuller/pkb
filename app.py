@@ -3,8 +3,9 @@
 from sys import argv
 import os
 import os.path
+import glob
 import bottle
-from bottle import route, static_file
+from bottle import route, static_file, request
 from newspaper import Article
 import urllib2
 import shutil
@@ -15,6 +16,10 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
+
+DATA_PATH = "/Users/ryanmuller/Sites/wiki/data"
+PAGES_DIR = "pages"
+PAGE_EXT = "txt"
 
 @route('/')
 def root():
@@ -27,6 +32,23 @@ def import_extract():
 @route('/page/<name>')
 def page(name):
     return static_file("app.html", root="./static/")
+
+@route('/data')
+def data():
+    pages = {}
+    for filename in glob.glob(DATA_PATH+"/"+PAGES_DIR+"/*."+PAGE_EXT):
+        with open(filename) as f:
+            title = os.path.splitext(os.path.basename(filename))[0]
+            pagedata = f.read()
+            pages[title] = { 'content': [pagedata] }
+
+    return pages
+
+@route('/data/<name>', method='POST')
+def write_page(name):
+    with open(DATA_DIR+"/pages/"+name+"."+PAGE_EXT, 'w') as f:
+        f.write(request.forms.get('content'))
+    return "OK"
 
 @route('/assets/<filepath:path>')
 def asset(filepath):
@@ -70,4 +92,5 @@ def scrape(url):
              'content': a.text,
              'content_html': a.article_html }
 
-bottle.run(host='0.0.0.0', port=argv[1])
+
+bottle.run(host='0.0.0.0', port=argv[1], server='gunicorn', workers=4)

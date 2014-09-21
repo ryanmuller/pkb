@@ -1,4 +1,4 @@
-var pages, imports, visited;
+var pages = {}, imports = [], visited = [];
 
 var storePages = function() {
   localStorage["pages"] = JSON.stringify(pages);
@@ -22,9 +22,23 @@ var contentToChunks = function(content) {
   }).join("");
 };
 
+var storePage = function(page, text) {
+  $.ajax({
+    type: "POST",
+    url: "/data/"+page,
+    data: { content: text },
+    dataType: "json"
+  });
+};
+
 var updateNthNode = function(n, text) {
   pages[currentPageName()].content[n] = text;
-  storePages();
+
+  if (n === 0) {
+    storePage(currentPageName(), text);
+  }
+
+  //storePages();
   return pages[currentPageName()].content[n];
 };
 
@@ -136,6 +150,16 @@ var loadFromLocalStorage = function() {
   }
 };
 
+var loadData = function() {
+  $.get("/data", function(data) {
+    pages = data;
+    currentPage = currentPageName() === "" ? "start" : currentPageName();
+    goToPage(currentPage);
+  }).fail(function() {
+    loadFromLocalStorage();
+  });
+};
+
 function getQueryParams() {
   var query = location.search.substr(1);
   var result = {};
@@ -176,7 +200,7 @@ var showImports = function() {
 };
 
 $(document).ready(function() {
-  loadFromLocalStorage();
+  loadData();
   handleImports();
   showImports();
   $("section:not(.pages,.recent)").hide();
