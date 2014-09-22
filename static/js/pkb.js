@@ -281,9 +281,19 @@ $(document).ready(function() {
   $("#scraper").on("change", function() {
     $(".imports .meta h2").text("loading...");
     $.get("/scrape/"+$(this).val(), function(data) {
-      $(".import.content").html(contentToChunks(data.content));
-      $(".import.content").prepend($("<p>").append($("<img>").attr("src", data.image)));
-      $(".import.content").prepend($("<h2>").text(data.title));
+      if ('content' in data) {
+        $(".import.content").html(contentToChunks(data.content));
+        $(".import.content").prepend($("<p>").append($("<img>").attr("src", data.image)));
+        $(".import.content").prepend($("<h2>").text(data.title));
+      } else {
+        $(".import.content").empty();
+        for (var i in data) {
+          if (data.hasOwnProperty(i)) {
+            var item = data[i];
+            $(".import.content").append("<p><a href=\""+item.link+"\">"+item.title+"</a>: "+item.description+"</p>");
+          }
+        }
+      }
     });
   });
   $("#scraper").val("http://en.wikipedia.org/wiki/Great_Barrier_Reef");
