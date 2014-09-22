@@ -77,9 +77,12 @@ of them.)
 
 ## Next steps
 
-- File storage.
-- Convert client to React for better code organization and faster
-  rendering.
-- Convert server to Clojure. The JVM ecosystem has strong NLP libraries.
-- Explore automation features.
-- Begin visual design.
+- Finalize data representation
+- File storage
+- RSS import
+- Visual design
+- Convert client to React (better code organization and faster
+  rendering)
+- Convert server to JVM (better offering of NLP libraries) 
+- Versioning
+- Explore automation features
