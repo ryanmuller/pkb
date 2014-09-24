@@ -9,7 +9,7 @@ var convertLinks = function(text) {
 };
 
 var nodeToHTML = function(node) {
-  return markdown.toHTML(convertLinks(node));
+  return marked(convertLinks(node));
 };
 
 var contentToHTML = function(content) {
