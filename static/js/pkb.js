@@ -9,11 +9,11 @@ var convertLinks = function(text) {
 };
 
 var nodeToHTML = function(node) {
-  return "<div id="+md5(node)+">"+markdown.toHTML(convertLinks(node))+"</div>";
+  return markdown.toHTML(convertLinks(node));
 };
 
 var contentToHTML = function(content) {
-  return _.map(content, nodeToHTML).join("");
+  return nodeToHTML(content[0]);
 };
 
 var contentToChunks = function(content) {
@@ -22,21 +22,23 @@ var contentToChunks = function(content) {
   }).join("");
 };
 
-var updateNthNode = function(n, text) {
-  pages[currentPageName()].content[n] = text;
+var updateNode = function(text) {
+  pages[currentPageName()].content[0] = text;
   storePages();
-  return pages[currentPageName()].content[n];
+  return text;
 };
 
 var insertNode = function(n, text) {
-  pages[currentPageName()].content.splice(n, 0, text);
+  var ps = pages[currentPageName()].content[0].split("\n\n");
+  ps.splice(n, 0, text);
+  pages[currentPageName()].content[0] = ps.join("\n\n");
   storePages();
-  return pages[currentPageName()].content[n];
+  return pages[currentPageName()].content[0];
 };
 
 var displayPage = function(name) {
-  $(".pages h1").text(_.capitalize(name.replace(/_/g, " ")));
-  $(".page.content").html(contentToHTML(pages[name].content));
+  $("#page h1").text(_.capitalize(name.replace(/_/g, " ")));
+  $("#page .content").html(contentToHTML(pages[name].content));
 };
 
 var goToPage = function(name) {
@@ -83,9 +85,7 @@ var doSearch = function(term) {
 
   var res = pagesRes + importsRes;
 
-  $("section:not(.pages)").hide();
-  $("section.results").show();
-  $("section.results").html(res);
+  $("#cards").html(res);
 };
 
 var showLatest = function() {
@@ -167,11 +167,13 @@ var handleImports = function() {
 };
 
 var showImports = function() {
+  $("#cards .content").empty();
+  $("#cards > h1").text("Recent imports");
   _.each(imports, function(imported) {
     $title = $("<h2>").text(imported.title);
     $extract = $("<p>").html(imported.extract);
     $source = $("<a>").attr("href",imported.source).text("Source");
-    $("<div>").addClass("extract").append($title).append($extract).append($source).appendTo($(".recent .content"));
+    $("<div>").addClass("extract").append($title).append($extract).append($source).appendTo($("#cards .content"));
   });
 };
 
@@ -179,35 +181,14 @@ $(document).ready(function() {
   loadFromLocalStorage();
   handleImports();
   showImports();
-  $("section:not(.pages,.recent)").hide();
 
   $("#goImport").on("click", function() {
-    $("section:not(.pages)").hide();
-    $(".imports").show();
   });
 
   $("#goRecent").on("click", function() {
-    $("section:not(.pages)").hide();
-    $(".recent").show();
   });
 
-  $(".recent .content").sortable({
-    connectWith: ".content",
-    helper: function (e, li) {
-      this.copyHelper = li.clone().insertAfter(li);
-      $(this).data("copied", false);
-      return li.clone();
-    },
-    stop: function () {
-      var copied = $(this).data("copied");
-      if (!copied) {
-        this.copyHelper.remove();
-      }
-      this.copyHelper = null;
-    }
-  });
-
-  $(".imports .content").sortable({
+  $("#cards .content").sortable({
     forcePlaceholderSize: true,
     placeholder: "ui-state-highlight",
     connectWith: ".content",
@@ -225,57 +206,35 @@ $(document).ready(function() {
     }
   });
 
-  $(".page.content").sortable({
-    forcePlaceholderSize: true,
-    placeholder: "ui-state-highlight",
+  $("#page .content").sortable({
+    cancel: "*",
     receive: function (e, ui) {
       var text, title, href;
       ui.sender.data('copied', true);
-      if (ui.sender.parent().hasClass("recent")) {
-        text = toMarkdown(ui.item.find("p").first().html());
-        title = ui.item.find("h2").first().text();
-        href = ui.item.find("a").last().attr("href");
-      } else if (ui.sender.parent().hasClass("imports")) {
-        text = toMarkdown(ui.item.html());
-        title = ui.sender.parent().find("h2").first().text();
-        href = ui.sender.parent().find("input").first().val();
-      }
-      insertNode($(".page.content").children().index(ui.item),
+      text = toMarkdown(ui.item.find("p").first().html());
+      title = ui.item.find("h2").first().text();
+      href = ui.item.find("a").last().attr("href");
+      insertNode($("#page .content").children().index(ui.item),
                  "["+title+"]("+href+"): "+text);
-      displayPage(currentPageName());
-    },
-    update: function() {
-      pages[currentPageName()].content = _.sortBy(pages[currentPageName()].content, function(page) {
-        return _.map($(".page.content").children(), function($node) { return $node.id; }).indexOf(md5(page));
-      });
-      storePages();
       displayPage(currentPageName());
     }
   });
 
-  $(".page.content").on("click", "div", function() {
-    var $it = $(this);
-    var $textarea = $("<textarea>")
-      .attr("rows", 12)
-      .css({
-        width: "100%"
-      });
-
-    var pos = $(".page.content").children().index($it),
-        text = pages[currentPageName()].content[pos];
-
-    $it.replaceWith($textarea);
-
-    $textarea
+  $("#page").on("dblclick", ".content", function() {
+    $(this).html(
+      $("<textarea></textarea>")
+      .css({ height: "100%", width: "100%" })
       .focus()
-      .val(text);
+      .val(pages[currentPageName()].content[0]));
   });
 
-  $(".page.content").on("blur", "textarea", function() {
-    var $it = $(this),
-        text = $it.val();
-    updateNthNode($(".page.content").children().index($it), text);
+  $("#page").on("focusout", "textarea", function() {
+    updateNode($(this).val());
     displayPage(currentPageName());
+    //$(this).replaceWith(
+    //  $("<div></div>")
+    //  .addClass("content")
+    //  .html(markdown.toHTML($(this).val())));
   });
 
   $("#scraper").on("change", function() {
@@ -313,13 +272,7 @@ $(document).ready(function() {
 
   $("#searcher").select2({
     createSearchChoice: function(term, data) {
-      if ( $(data).filter( function() {
-        return this.text.localeCompare(term)===0;
-      }).length===0) {
-        return {id:term, text:term};
-      } else {
-        return { id: "search:"+term, text: "search:"+term };
-      }
+      return { id: term, text: "Create "+term };
     },
     data: function() { return { results: pageOptions() }}
   });

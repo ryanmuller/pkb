@@ -15,36 +15,25 @@
 </head>
 
 <body>
-  <nav>
-    <header><h1>pkb</h1></header>
+  <section id="page">
+    <h1></h1>
+    <div class="content">
+      <p>No page loaded.</p>
+    </div>
+  </section>
+  <section id="cards">
+    <nav>
+      <header><h1>pkb</h1></header>
+      <input id="searcher" type="text" placeholder="Go to page or search" class="x100">
+      <div id="latest"></div>
+    </nav>
     <button id="goRecent">Recent</button>
     <button id="goImport">Import</button>
-    <input id="searcher" type="text" placeholder="Go to page or search" class="x20">
-    <div id="latest"></div>
-  </nav>
-  <section class="results">
     <h1>Search results</h1>
     <div class="content">
     </div>
   </section>
-  <section class="recent">
-    <h1>Recent imports</h1>
-    <p>Import by dragging this link to your bookmarks: <a href="javascript:(function()%7Bfunction%20getHTMLOfSelection%20()%20%7Bvar%20range%3Bif%20(document.selection%20%26%26%20document.selection.createRange)%20%7Brange%20%3D%20document.selection.createRange()%3Breturn%20range.htmlText%3B%7Delse%20if%20(window.getSelection)%20%7Bvar%20selection%20%3D%20window.getSelection()%3Bif%20(selection.rangeCount%20%3E%200)%20%7Brange%20%3D%20selection.getRangeAt(0)%3Bvar%20clonedSelection%20%3D%20range.cloneContents()%3Bvar%20div%20%3D%20document.createElement('div')%3Bdiv.appendChild(clonedSelection)%3Breturn%20div.innerHTML%3B%7Delse%20%7Breturn%20''%3B%7D%7Delse%20%7Breturn%20''%3B%7D%7Dvar%20title%20%3D%20encodeURIComponent(document.title.substring(0%2C64))%2Cpages%20%3D%20encodeURIComponent(prompt(%22Add%20to%20pages%22))%2Csource%20%3D%20encodeURIComponent(location.href)%2Cextract%20%3D%20encodeURIComponent(getHTMLOfSelection())%3Blocation.href%20%3D%20%22http%3A%2F%2Fpkb.herokuapp.com%2Fimport%3Ftitle%3D%22%2Btitle%2B%22%26pages%3D%22%2Bpages%2B%22%26source%3D%22%2Bsource%2B%22%26extract%3D%22%2Bextract%7D)()">Import to pkb</a></p>
-    <div class="content">
-    </div>
-  </section>
-  <section class="imports">
-    <h1>Import from URL</h1>
-    <label for="scraper">Import</label>
-    <input id="scraper" type="text" placeholder="http://" class="x100" />
-    <div class="meta">
-    </div>
-    <div class="import content"></div>
-  </section>
-  <section class="pages">
-    <h1></h1>
-    <div class="page content">
-      <p>No page loaded.</p>
-    </div>
-  </section>
+  <footer>
+    <a href="javascript:(function()%7Bfunction%20getHTMLOfSelection%20()%20%7Bvar%20range%3Bif%20(document.selection%20%26%26%20document.selection.createRange)%20%7Brange%20%3D%20document.selection.createRange()%3Breturn%20range.htmlText%3B%7Delse%20if%20(window.getSelection)%20%7Bvar%20selection%20%3D%20window.getSelection()%3Bif%20(selection.rangeCount%20%3E%200)%20%7Brange%20%3D%20selection.getRangeAt(0)%3Bvar%20clonedSelection%20%3D%20range.cloneContents()%3Bvar%20div%20%3D%20document.createElement('div')%3Bdiv.appendChild(clonedSelection)%3Breturn%20div.innerHTML%3B%7Delse%20%7Breturn%20''%3B%7D%7Delse%20%7Breturn%20''%3B%7D%7Dvar%20title%20%3D%20encodeURIComponent(document.title.substring(0%2C64))%2Cpages%20%3D%20encodeURIComponent(prompt(%22Add%20to%20pages%22))%2Csource%20%3D%20encodeURIComponent(location.href)%2Cextract%20%3D%20encodeURIComponent(getHTMLOfSelection())%3Blocation.href%20%3D%20%22http%3A%2F%2Fpkb.herokuapp.com%2Fimport%3Ftitle%3D%22%2Btitle%2B%22%26pages%3D%22%2Bpages%2B%22%26source%3D%22%2Bsource%2B%22%26extract%3D%22%2Bextract%7D)()">Import to pkb</a>
+</footer>
 </body>
