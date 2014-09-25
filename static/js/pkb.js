@@ -36,9 +36,21 @@ var insertNode = function(n, text) {
   return pages[currentPageName()].content;
 };
 
+var titlefy = function(title) {
+  return title.toLowerCase().replace(/\W/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+};
+
 var displayPage = function(name) {
   $("#page h1").text(_.capitalize(name.replace(/_/g, " ")));
   $("#page .content").html(contentToHTML(pages[name].content));
+  $("#page #toc").html('<ul>'+_.map($("#page .content h2"), function(h2) {
+    var $it = $(h2),
+        title = $it.text(),
+        id = titlefy(title);
+
+    $it.attr("id", id);
+    return '<li><a href="#'+id+'">'+title+'</a>';
+  }).join('')+'</ul>');
 };
 
 var goToPage = function(name) {
