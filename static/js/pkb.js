@@ -180,13 +180,20 @@ var showImports = function() {
 $(document).ready(function() {
   loadFromLocalStorage();
   handleImports();
-  showImports();
 
   $("#goImport").on("click", function() {
+    $("#cards > h1").text("Import website");
+    $("#cards .options").html('<input type="text" id="scraper" class="x100">');
+    $("#cards .content").empty();
   });
 
   $("#goRecent").on("click", function() {
+    $("#cards > h1").text("Recent imports");
+    $("#cards .options").empty();
+    $("#cards .content").empty();
+    showImports();
   });
+  $("#goRecent").click();
 
   $("#cards .content").sortable({
     forcePlaceholderSize: true,
@@ -211,9 +218,18 @@ $(document).ready(function() {
     receive: function (e, ui) {
       var text, title, href;
       ui.sender.data('copied', true);
-      text = toMarkdown(ui.item.find("p").first().html());
-      title = ui.item.find("h2").first().text();
       href = ui.item.find("a").last().attr("href");
+
+      if ($("#cards > h1").text() === "Recent imports") {
+        text = toMarkdown(ui.item.find("p").first().html());
+        title = ui.item.find("h2").first().text();
+        href = ui.item.find("a").last().attr("href");
+      } else if ($("#cards > h1").text() === "Import website") {
+        text = toMarkdown(ui.item.html());
+        title = $("#cards > .content > h2").text();
+        href = $("#cards > .options > input").val();
+      }
+
       insertNode($("#page .content").children().index(ui.item),
                  "["+title+"]("+href+"): "+text);
       displayPage(currentPageName());
@@ -237,27 +253,25 @@ $(document).ready(function() {
     //  .html(markdown.toHTML($(this).val())));
   });
 
-  $("#scraper").on("change", function() {
-    $(".imports .meta h2").text("loading...");
+  $(document).on("change", "#scraper", function() {
     $.get("/scrape/"+$(this).val(), function(data) {
       if ('content' in data) {
-        $(".import.content").html(contentToChunks(data.content));
         $(".import.content").prepend($("<p>").append($("<img>").attr("src", data.image)));
         $(".import.content").prepend($("<h2>").text(data.title));
+        $("#cards .content").html(contentToChunks(data.content));
+        $("#cards .content").prepend($("<p>").append($("<img>").attr("src", data.image)));
+        $("#cards .content").prepend($("<h2>").text(data.title));
       } else {
-        $(".import.content").empty();
+        $("#cards .content").empty();
         for (var i in data) {
           if (data.hasOwnProperty(i)) {
             var item = data[i];
-            $(".import.content").append("<p><a href=\""+item.link+"\">"+item.title+"</a>: "+item.description+"</p>");
+            $("#cards .content").append("<p><a href=\""+item.link+"\">"+item.title+"</a>: "+item.description+"</p>");
           }
         }
       }
     });
   });
-  $("#scraper").val("http://en.wikipedia.org/wiki/Great_Barrier_Reef");
-  $("#scraper").change();
-
 
   if (window.location.pathname.split("/")[1] === "page") {
     goToPageByPath(window.location.pathname);
