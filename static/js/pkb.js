@@ -5,6 +5,14 @@ var storePages = function() {
 };
 
 var convertLinks = function(text) {
+  return text.replace(/\[\[([^\]#]+)(#([^\]]+))?\]\]/g, function(_, page, _, match) {
+    if (typeof match !== "undefined") {
+      return "["+match+"](/pages/"+page+"#"+titlefy(match)+")";
+      //return "["+match+" ("+page+")](/pages/"+page+"#"+arrToHex(smaz.compress(match.substring(0,32)))+")";
+    } else {
+      return "["+page+"](/pages/"+page+")";
+    }
+  });
   return text.replace(/\[\[([^\]]+)\]\]/g, "[$1](/pages/$1)");
 };
 
@@ -37,7 +45,7 @@ var insertNode = function(n, text) {
 };
 
 var titlefy = function(title) {
-  return title.toLowerCase().replace(/\W/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+  return title.toLowerCase().replace(/\W/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "");
 };
 
 var displayPage = function(name) {
@@ -56,17 +64,21 @@ var displayPage = function(name) {
 var goToPage = function(name) {
   if (name === "") return;
 
-  if (name.match(/^search:/) !== null) {
-    doSearch(name.replace(/^search:/, ""));
+  var page = name.split("#")[0],
+      anchor = name.split("#")[1];
+
+  if (page.match(/^search:/) !== null) {
+    doSearch(page.replace(/^search:/, ""));
     return;
   } else {
-    if (typeof pages[name] === "undefined") {
-      pages[name] = { content: "Write *something* about "+name+"." };
+    if (typeof pages[page] === "undefined") {
+      pages[page] = { content: "Write *something* about "+name+"." };
       //doSearch(name.replace(/_/g, " "));
     }
-    displayPage(name);
+    displayPage(page);
+    location.href = "#"+anchor;
     history.pushState({}, "", "/page/"+name);
-    updateVisited(name);
+    updateVisited(page);
   }
 };
 
@@ -126,7 +138,7 @@ var pageOptions = function() {
 };
 
 var currentPageName = function() {
-  return _.last(location.pathname.split("/"));
+  return _.last(location.pathname.split("/")).split("#")[0];
 };
 
 var loadFromLocalStorage = function() {
