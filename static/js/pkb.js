@@ -126,7 +126,7 @@ var currentPageName = function() {
   return _.last(location.pathname.split("/"));
 };
 
-var loadFromLocalStorage = function() {
+var loadPagesFromLocalStorage = function() {
   if (typeof localStorage["pages"] === "undefined") {
     pages = {
       home: { content: "Welcome to my `personal knowledge base`." },
@@ -137,7 +137,9 @@ var loadFromLocalStorage = function() {
   } else {
     pages = JSON.parse(localStorage["pages"]);
   }
+}
 
+var loadImportsFromLocalStorage = function() {
   if (typeof localStorage["imports"] === "undefined") {
     imports = [];
   } else {
@@ -151,7 +153,7 @@ var loadData = function() {
     currentPage = currentPageName() === "" ? "start" : currentPageName();
     goToPage(currentPage);
   }).fail(function() {
-    loadFromLocalStorage();
+    loadPagesFromLocalStorage();
   });
 };
 
@@ -198,6 +200,7 @@ var showImports = function() {
 
 $(document).ready(function() {
   loadData();
+  loadImportsFromLocalStorage();
   handleImports();
 
   $("#goImport").on("click", function() {
