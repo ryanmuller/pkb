@@ -218,7 +218,6 @@ $(document).ready(function() {
     receive: function (e, ui) {
       var text, title, href;
       ui.sender.data('copied', true);
-      href = ui.item.find("a").last().attr("href");
 
       if ($("#cards > h1").text() === "Recent imports") {
         text = toMarkdown(ui.item.find("p").first().html());
@@ -256,8 +255,6 @@ $(document).ready(function() {
   $(document).on("change", "#scraper", function() {
     $.get("/scrape/"+$(this).val(), function(data) {
       if ('content' in data) {
-        $(".import.content").prepend($("<p>").append($("<img>").attr("src", data.image)));
-        $(".import.content").prepend($("<h2>").text(data.title));
         $("#cards .content").html(contentToChunks(data.content));
         $("#cards .content").prepend($("<p>").append($("<img>").attr("src", data.image)));
         $("#cards .content").prepend($("<h2>").text(data.title));
