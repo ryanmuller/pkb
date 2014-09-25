@@ -42,7 +42,7 @@ def data():
         with open(filename) as f:
             title = os.path.splitext(os.path.basename(filename))[0]
             pagedata = f.read()
-            pages[title] = { 'content': [pagedata] }
+            pages[title] = { 'content': pagedata }
 
     return pages
 
