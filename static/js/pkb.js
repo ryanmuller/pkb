@@ -175,29 +175,26 @@ var handleImports = function() {
   var params = getQueryParams(),
       source = params["source"],
       title = params["title"],
-      pages = params["pages"].split(/\W/),
+      pages = params["pages"].split(/(,|\s)+/),
       extract = params["extract"];
   imports.unshift({
     title: title,
     source: source,
-    extract: extract
+    extract: extract,
+    pages: pages
   });
 
   localStorage["imports"] = JSON.stringify(imports);
-
-  _.each(pages, function(page) {
-    // TODO add to selected pages
-  });
 };
 
 var showImports = function() {
   $("#cards .content").empty();
   $("#cards > h1").text("Recent imports");
   _.each(imports, function(imported) {
-    $title = $("<h2>").text(imported.title);
+    $title = '<a href="'+imported.source+'" class="source">'+imported.title+'</a>'
     $extract = $("<p>").html(imported.extract);
-    $source = $("<a>").attr("href",imported.source).text("Source");
-    $("<div>").addClass("extract").append($title).append($extract).append($source).appendTo($("#cards .content"));
+    $pages = ' ('+_.map(imported.pages, function(page) { return '<a href="/pages/'+page+'">'+page+'</a>'; }).join(', ')+')';
+    $("<div>").addClass("extract").append($title).append($pages).append($extract).appendTo($("#cards .content"));
   });
 };
 
@@ -245,8 +242,8 @@ $(document).ready(function() {
 
       if ($("#cards > h1").text() === "Recent imports") {
         text = toMarkdown(ui.item.find("p").first().html());
-        title = ui.item.find("h2").first().text();
-        href = ui.item.find("a").last().attr("href");
+        title = ui.item.find("a.source").first().text();
+        href = ui.item.find("a.source").first().attr("href");
       } else if ($("#cards > h1").text() === "Import website") {
         text = toMarkdown(ui.item.html());
         title = $("#cards > .content > h2").text();
