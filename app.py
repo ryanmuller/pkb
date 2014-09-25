@@ -6,6 +6,8 @@ import os.path
 import glob
 import bottle
 from bottle import route, static_file, request
+import requests
+from lxml import etree
 from newspaper import Article
 import urllib2
 import shutil
@@ -76,11 +78,22 @@ def scrape_pdf(url):
         return { 'url': url,
                  'content': out }
 
+@route('/scrape-rss/<url:path>')
+def scrape_rss(url):
+    r = requests.get(url)
+    rss = etree.fromstring(r.content)
+    items = [i for i in rss[0] if i.tag == 'item']
+    return { i: { attr.tag: attr.text for attr in item } for i, item in enumerate(items) }
+
 @route('/scrape/<url:path>')
 def scrape(url):
-    pdf_pattern = re.compile('\.pdf$')
-    if pdf_pattern.search(url):
+    if re.search(r'\.pdf$', url) != None:
         return scrape_pdf(url)
+
+    r = requests.head(url)
+
+    if re.search(r'\bxml\b', r.headers['content-type']) != None:
+        return scrape_rss(url)
 
     a = Article(url, keep_article_html=True)
     a.download()

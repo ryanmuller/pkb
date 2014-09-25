@@ -9,11 +9,11 @@ var convertLinks = function(text) {
 };
 
 var nodeToHTML = function(node) {
-  return "<div id="+md5(node)+">"+markdown.toHTML(convertLinks(node))+"</div>";
+  return marked(convertLinks(node));
 };
 
 var contentToHTML = function(content) {
-  return _.map(content, nodeToHTML).join("");
+  return nodeToHTML(content);
 };
 
 var contentToChunks = function(content) {
@@ -31,26 +31,23 @@ var storePage = function(page, text) {
   });
 };
 
-var updateNthNode = function(n, text) {
-  pages[currentPageName()].content[n] = text;
-
-  if (n === 0) {
-    storePage(currentPageName(), text);
-  }
-
-  //storePages();
-  return pages[currentPageName()].content[n];
+var updateNode = function(text) {
+  pages[currentPageName()].content = text;
+  storePage(currentPageName(), text);
+  return text;
 };
 
 var insertNode = function(n, text) {
-  pages[currentPageName()].content.splice(n, 0, text);
+  var ps = pages[currentPageName()].content.split("\n\n");
+  ps.splice(n, 0, text);
+  pages[currentPageName()].content = ps.join("\n\n");
   storePages();
-  return pages[currentPageName()].content[n];
+  return pages[currentPageName()].content;
 };
 
 var displayPage = function(name) {
-  $(".pages h1").text(_.capitalize(name.replace(/_/g, " ")));
-  $(".page.content").html(contentToHTML(pages[name].content));
+  $("#page h1").text(_.capitalize(name.replace(/_/g, " ")));
+  $("#page .content").html(contentToHTML(pages[name].content));
 };
 
 var goToPage = function(name) {
@@ -61,7 +58,7 @@ var goToPage = function(name) {
     return;
   } else {
     if (typeof pages[name] === "undefined") {
-      pages[name] = { content: ["Write *something* about "+name+"."] };
+      pages[name] = { content: "Write *something* about "+name+"." };
       //doSearch(name.replace(/_/g, " "));
     }
     displayPage(name);
@@ -97,9 +94,7 @@ var doSearch = function(term) {
 
   var res = pagesRes + importsRes;
 
-  $("section:not(.pages)").hide();
-  $("section.results").show();
-  $("section.results").html(res);
+  $("#cards").html(res);
 };
 
 var showLatest = function() {
@@ -134,10 +129,10 @@ var currentPageName = function() {
 var loadFromLocalStorage = function() {
   if (typeof localStorage["pages"] === "undefined") {
     pages = {
-      home: { content: [ "Welcome to my `personal knowledge base`." ] },
-      reef: { content: [ "A reef is a rock, sandbar, or other feature lying beneath the surface of the water (80 meters or less beneath low water)." ] },
-      australia: { content: [ "Australia, officially the Commonwealth of Australia, is a country comprising the mainland of the Australian continent, the island of Tasmania, and numerous smaller islands. It is the world's sixth-largest country by total area. Neighbouring countries include Indonesia, East Timor and Papua New Guinea to the north; the Solomon Islands and Vanuatu to the north-east; and New Zealand to the south-east." ] },
-      fish: { content: [ "A fish is any member of a paraphyletic group of organisms that consist of all gill-bearing aquatic craniate animals that lack limbs with digits." ] }
+      home: { content: "Welcome to my `personal knowledge base`." },
+      reef: { content: "A reef is a rock, sandbar, or other feature lying beneath the surface of the water (80 meters or less beneath low water)." },
+      australia: { content: "Australia, officially the Commonwealth of Australia, is a country comprising the mainland of the Australian continent, the island of Tasmania, and numerous smaller islands. It is the world's sixth-largest country by total area. Neighbouring countries include Indonesia, East Timor and Papua New Guinea to the north; the Solomon Islands and Vanuatu to the north-east; and New Zealand to the south-east." },
+      fish: { content: "A fish is any member of a paraphyletic group of organisms that consist of all gill-bearing aquatic craniate animals that lack limbs with digits." }
     };
   } else {
     pages = JSON.parse(localStorage["pages"]);
@@ -191,47 +186,35 @@ var handleImports = function() {
 };
 
 var showImports = function() {
+  $("#cards .content").empty();
+  $("#cards > h1").text("Recent imports");
   _.each(imports, function(imported) {
     $title = $("<h2>").text(imported.title);
     $extract = $("<p>").html(imported.extract);
     $source = $("<a>").attr("href",imported.source).text("Source");
-    $("<div>").addClass("extract").append($title).append($extract).append($source).appendTo($(".recent .content"));
+    $("<div>").addClass("extract").append($title).append($extract).append($source).appendTo($("#cards .content"));
   });
 };
 
 $(document).ready(function() {
   loadData();
   handleImports();
-  showImports();
-  $("section:not(.pages,.recent)").hide();
 
   $("#goImport").on("click", function() {
-    $("section:not(.pages)").hide();
-    $(".imports").show();
+    $("#cards > h1").text("Import website");
+    $("#cards .options").html('<input type="text" id="scraper" class="x100">');
+    $("#cards .content").empty();
   });
 
   $("#goRecent").on("click", function() {
-    $("section:not(.pages)").hide();
-    $(".recent").show();
+    $("#cards > h1").text("Recent imports");
+    $("#cards .options").empty();
+    $("#cards .content").empty();
+    showImports();
   });
+  $("#goRecent").click();
 
-  $(".recent .content").sortable({
-    connectWith: ".content",
-    helper: function (e, li) {
-      this.copyHelper = li.clone().insertAfter(li);
-      $(this).data("copied", false);
-      return li.clone();
-    },
-    stop: function () {
-      var copied = $(this).data("copied");
-      if (!copied) {
-        this.copyHelper.remove();
-      }
-      this.copyHelper = null;
-    }
-  });
-
-  $(".imports .content").sortable({
+  $("#cards .content").sortable({
     forcePlaceholderSize: true,
     placeholder: "ui-state-highlight",
     connectWith: ".content",
@@ -249,70 +232,62 @@ $(document).ready(function() {
     }
   });
 
-  $(".page.content").sortable({
-    forcePlaceholderSize: true,
-    placeholder: "ui-state-highlight",
+  $("#page .content").sortable({
+    cancel: "*",
     receive: function (e, ui) {
       var text, title, href;
       ui.sender.data('copied', true);
-      if (ui.sender.parent().hasClass("recent")) {
+
+      if ($("#cards > h1").text() === "Recent imports") {
         text = toMarkdown(ui.item.find("p").first().html());
         title = ui.item.find("h2").first().text();
         href = ui.item.find("a").last().attr("href");
-      } else if (ui.sender.parent().hasClass("imports")) {
+      } else if ($("#cards > h1").text() === "Import website") {
         text = toMarkdown(ui.item.html());
-        title = ui.sender.parent().find("h2").first().text();
-        href = ui.sender.parent().find("input").first().val();
+        title = $("#cards > .content > h2").text();
+        href = $("#cards > .options > input").val();
       }
-      insertNode($(".page.content").children().index(ui.item),
+
+      insertNode($("#page .content").children().index(ui.item),
                  "["+title+"]("+href+"): "+text);
-      displayPage(currentPageName());
-    },
-    update: function() {
-      pages[currentPageName()].content = _.sortBy(pages[currentPageName()].content, function(page) {
-        return _.map($(".page.content").children(), function($node) { return $node.id; }).indexOf(md5(page));
-      });
-      storePages();
       displayPage(currentPageName());
     }
   });
 
-  $(".page.content").on("click", "div", function() {
-    var $it = $(this);
-    var $textarea = $("<textarea>")
-      .attr("rows", 12)
-      .css({
-        width: "100%"
-      });
-
-    var pos = $(".page.content").children().index($it),
-        text = pages[currentPageName()].content[pos];
-
-    $it.replaceWith($textarea);
-
-    $textarea
+  $("#page").on("dblclick", ".content", function() {
+    $(this).html(
+      $("<textarea></textarea>")
+      .css({ height: "100%", width: "100%" })
       .focus()
-      .val(text);
+      .val(pages[currentPageName()].content));
   });
 
-  $(".page.content").on("blur", "textarea", function() {
-    var $it = $(this),
-        text = $it.val();
-    updateNthNode($(".page.content").children().index($it), text);
+  $("#page").on("focusout", "textarea", function() {
+    updateNode($(this).val());
     displayPage(currentPageName());
+    //$(this).replaceWith(
+    //  $("<div></div>")
+    //  .addClass("content")
+    //  .html(markdown.toHTML($(this).val())));
   });
 
-  $("#scraper").on("change", function() {
-    $(".imports .meta h2").text("loading...");
+  $(document).on("change", "#scraper", function() {
     $.get("/scrape/"+$(this).val(), function(data) {
-      $(".import.content").html(contentToChunks(data.content));
-      $(".import.content").prepend($("<p>").append($("<img>").attr("src", data.image)));
-      $(".import.content").prepend($("<h2>").text(data.title));
+      if ('content' in data) {
+        $("#cards .content").html(contentToChunks(data.content));
+        $("#cards .content").prepend($("<p>").append($("<img>").attr("src", data.image)));
+        $("#cards .content").prepend($("<h2>").text(data.title));
+      } else {
+        $("#cards .content").empty();
+        for (var i in data) {
+          if (data.hasOwnProperty(i)) {
+            var item = data[i];
+            $("#cards .content").append("<p><a href=\""+item.link+"\">"+item.title+"</a>: "+item.description+"</p>");
+          }
+        }
+      }
     });
   });
-  $("#scraper").val("http://en.wikipedia.org/wiki/Great_Barrier_Reef");
-  $("#scraper").change();
-
 
   if (window.location.pathname.split("/")[1] === "page") {
     goToPageByPath(window.location.pathname);
@@ -327,13 +302,7 @@ $(document).ready(function() {
 
   $("#searcher").select2({
     createSearchChoice: function(term, data) {
-      if ( $(data).filter( function() {
-        return this.text.localeCompare(term)===0;
-      }).length===0) {
-        return {id:term, text:term};
-      } else {
-        return { id: "search:"+term, text: "search:"+term };
-      }
+      return { id: term, text: "Create "+term };
     },
     data: function() { return { results: pageOptions() }}
   });
