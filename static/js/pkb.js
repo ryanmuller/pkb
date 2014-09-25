@@ -13,7 +13,7 @@ var nodeToHTML = function(node) {
 };
 
 var contentToHTML = function(content) {
-  return nodeToHTML(content[0]);
+  return nodeToHTML(content);
 };
 
 var contentToChunks = function(content) {
@@ -23,17 +23,17 @@ var contentToChunks = function(content) {
 };
 
 var updateNode = function(text) {
-  pages[currentPageName()].content[0] = text;
+  pages[currentPageName()].content = text;
   storePages();
   return text;
 };
 
 var insertNode = function(n, text) {
-  var ps = pages[currentPageName()].content[0].split("\n\n");
+  var ps = pages[currentPageName()].content.split("\n\n");
   ps.splice(n, 0, text);
-  pages[currentPageName()].content[0] = ps.join("\n\n");
+  pages[currentPageName()].content = ps.join("\n\n");
   storePages();
-  return pages[currentPageName()].content[0];
+  return pages[currentPageName()].content;
 };
 
 var displayPage = function(name) {
@@ -49,7 +49,7 @@ var goToPage = function(name) {
     return;
   } else {
     if (typeof pages[name] === "undefined") {
-      pages[name] = { content: ["Write *something* about "+name+"."] };
+      pages[name] = { content: "Write *something* about "+name+"." };
       //doSearch(name.replace(/_/g, " "));
     }
     displayPage(name);
@@ -120,10 +120,10 @@ var currentPageName = function() {
 var loadFromLocalStorage = function() {
   if (typeof localStorage["pages"] === "undefined") {
     pages = {
-      home: { content: [ "Welcome to my `personal knowledge base`." ] },
-      reef: { content: [ "A reef is a rock, sandbar, or other feature lying beneath the surface of the water (80 meters or less beneath low water)." ] },
-      australia: { content: [ "Australia, officially the Commonwealth of Australia, is a country comprising the mainland of the Australian continent, the island of Tasmania, and numerous smaller islands. It is the world's sixth-largest country by total area. Neighbouring countries include Indonesia, East Timor and Papua New Guinea to the north; the Solomon Islands and Vanuatu to the north-east; and New Zealand to the south-east." ] },
-      fish: { content: [ "A fish is any member of a paraphyletic group of organisms that consist of all gill-bearing aquatic craniate animals that lack limbs with digits." ] }
+      home: { content: "Welcome to my `personal knowledge base`." },
+      reef: { content: "A reef is a rock, sandbar, or other feature lying beneath the surface of the water (80 meters or less beneath low water)." },
+      australia: { content: "Australia, officially the Commonwealth of Australia, is a country comprising the mainland of the Australian continent, the island of Tasmania, and numerous smaller islands. It is the world's sixth-largest country by total area. Neighbouring countries include Indonesia, East Timor and Papua New Guinea to the north; the Solomon Islands and Vanuatu to the north-east; and New Zealand to the south-east." },
+      fish: { content: "A fish is any member of a paraphyletic group of organisms that consist of all gill-bearing aquatic craniate animals that lack limbs with digits." }
     };
   } else {
     pages = JSON.parse(localStorage["pages"]);
@@ -240,7 +240,7 @@ $(document).ready(function() {
       $("<textarea></textarea>")
       .css({ height: "100%", width: "100%" })
       .focus()
-      .val(pages[currentPageName()].content[0]));
+      .val(pages[currentPageName()].content));
   });
 
   $("#page").on("focusout", "textarea", function() {
