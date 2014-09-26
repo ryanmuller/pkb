@@ -96,3 +96,7 @@ blockquote:before {
 blockquote p:first-child {
   display: inline;
 }
+
+.extract {
+  margin-bottom: 2em;
+}

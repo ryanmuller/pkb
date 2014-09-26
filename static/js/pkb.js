@@ -48,9 +48,13 @@ var titlefy = function(title) {
   return title.toLowerCase().replace(/\W/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "");
 };
 
-var displayPage = function(name) {
+var displayPage = function(name, pageObj) {
+  if (typeof pageObj === "undefined") {
+    pageObj = pages[name];
+  }
+
   $("#page h1").text(_.capitalize(name.replace(/_/g, " ")));
-  $("#page .content").html(contentToHTML(pages[name].content));
+  $("#page .content").html(contentToHTML(pageObj.content));
   $("#page #toc").html('<ul>'+_.map($("#page .content h2"), function(h2) {
     var $it = $(h2),
         title = $it.text(),
@@ -71,11 +75,13 @@ var goToPage = function(name) {
     doSearch(page.replace(/^search:/, ""));
     return;
   } else {
-    if (typeof pages[page] === "undefined") {
+    var pageObj = pages[page] || _.find(imports, function(imprt) { return (imprt.id || "NONE").match(new RegExp("^"+page)); });
+
+    if (typeof pageObj === "undefined") {
       pages[page] = { content: "Write *something* about "+name+"." };
       //doSearch(name.replace(/_/g, " "));
     }
-    displayPage(page);
+    displayPage(page, pageObj);
     location.href = "#"+anchor;
     history.pushState({}, "", "/page/"+name);
     updateVisited(page);
@@ -102,9 +108,9 @@ var doSearch = function(term) {
   }).join("");
 
   var importsRes = _.map(_.filter(imports, function(imp) {
-    return imp.title.indexOf(term) !== -1 || imp.extract.indexOf(term) !== -1;
+    return imp.title.indexOf(term) !== -1 || imp.content.indexOf(term) !== -1;
   }), function(imp) {
-    return "<h2>Results from <a href=\"" + imp.source + "\">" + imp.title + "</a>:</h2>" + imp.extract;
+    return "<h2>Results from <a href=\"" + imp.source + "\">" + imp.title + "</a>:</h2>" + imp.content;
   }).join("");
 
   var res = pagesRes + importsRes;
@@ -115,7 +121,7 @@ var doSearch = function(term) {
 var showLatest = function() {
   $("#latest").empty();
   _.each(_.first(_.uniq(visited), 5), function(name) {
-    $link = $("<a>").attr("href", "/page/"+name).text(name);
+    $link = $("<a>").attr("href", "/page/"+name).text(name.slice(0,8));
     $("#latest").append($link);
   });
 }
@@ -170,17 +176,23 @@ function getQueryParams() {
   return result;
 }
 
+var toId = function(content) {
+  return md5(content);
+}
+
 var handleImports = function() {
   if (location.pathname.split("/")[1] !== "import") return;
   var params = getQueryParams(),
       source = params["source"],
       title = params["title"],
       pages = params["pages"].split(/(,|\s)+/),
-      extract = params["extract"];
+      content = params["extract"],
+      id = toId(content);
   imports.unshift({
+    id: id,
     title: title,
     source: source,
-    extract: extract,
+    content: content,
     pages: pages
   });
 
@@ -191,10 +203,12 @@ var showImports = function() {
   $("#cards .content").empty();
   $("#cards > h1").text("Recent imports");
   _.each(imports, function(imported) {
-    $title = '<a href="'+imported.source+'" class="source">'+imported.title+'</a>'
-    $extract = $("<p>").html(imported.extract);
-    $pages = ' ('+_.map(imported.pages, function(page) { return '<a href="/pages/'+page+'">'+page+'</a>'; }).join(', ')+')';
-    $("<div>").addClass("extract").append($title).append($pages).append($extract).appendTo($("#cards .content"));
+    var id = imported.id || toId(imported.content);
+    $link = '<input type="text" value="'+id+'" class="link x20"/> ';
+    $title = '<a href="'+imported.source+'" class="source">'+imported.title+'</a> '
+    $content = $("<p>").html(imported.content);
+    $pages = _.map(imported.pages, function(page) { return '<a href="/page/'+page+'">'+page+'</a>'; }).join(', ');
+    $("<div>").addClass("extract").append($title).append($content).append($link).append($pages).appendTo($("#cards .content"));
   });
 };
 
@@ -312,5 +326,10 @@ $(document).ready(function() {
   $("#searcher").on("change", function() {
     var term = $(this).val().replace(/\s/g, "_");
     goToPage(term);
+  });
+
+  $(document).on("click", "input.link", function(e) {
+    this.select();
+    this.setSelectionRange(0, this.value.length);
   });
 });
