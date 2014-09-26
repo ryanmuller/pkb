@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/ryanmuller/pkb.png?label=ready&title=Ready)](https://waffle.io/ryanmuller/pkb)
 # pkb
 
 your personal knowledge base on the web
