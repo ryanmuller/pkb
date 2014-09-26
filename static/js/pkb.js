@@ -185,7 +185,7 @@ var handleImports = function() {
   var params = getQueryParams(),
       source = params["source"],
       title = params["title"],
-      pages = params["pages"].split(/(,|\s)+/),
+      pages = params["pages"].split(/\s+/),
       content = params["extract"],
       id = toId(content);
   imports.unshift({
