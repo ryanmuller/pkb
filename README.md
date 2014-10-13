@@ -41,49 +41,32 @@ block in a page saved at all!
 
 ## Roadmap
 
-**Flexible storage.** By default, we store in flat files with a metadata
-format similar to Jekyll's [front
-matter](http://jekyllrb.com/docs/frontmatter/). This allows easy
-individual setup, cross-product syncing, and flexible file editing.
-Eventually we may want to allow database storage for cloud hosting.
+**Flexible storage.** We use [content-addressable
+storage](http://en.wikipedia.org/wiki/Content-addressable_storage) to
+facilitate import to and distribution of your knowledge base.
 
-**Modular UI components.** Our approach (inspired by [Smallest Federated
-Wiki](https://github.com/WardCunningham/Smallest-Federated-Wiki)) is to
-interpret page data as a sequence of components. The most basic
-component is an editable text block, while others could be interactive
-widgets. Using a brand new type of component is as easy as downloading a
-js file to your app and specifying the correct metadata.
+**Ubquitous capture.** We provide web capture tools and support import
+from other APIs and RSS feeds. We also define a standard format (similar
+to Jekyll front-matter) to specify sources.
 
-**Replication over reference.** Unfortunately URLs and API formats are
-unreliable. We favor locally replicating data whenever possible.
-Combined with flat file storage, this allows full or partial pkbs to be
-replicated regardless of platform or online connectivity.
+**Powerful sensemaking and organization.** We offer UI affordances and
+automation tools that help with the process of organizing and making
+sense of your information.
 
-**Ubiquitous import.** We provide a web and PDF scraping API for turning
-any site on the web into a set of text block components. Scraping is
-fast and captures media. Importing features are extensible, allowing end
-users to write custom scrapers for structured data, such as Wikipedia
-pages.
-
-**Powerful collaboration.** Any pkb page can be copied with the web
-scraping tools. But we enable stronger collaborate with other pkb
-instances via identical replication of components. We can achieve this
-either with an API or by adding data attributes to the DOM.
-
-**Smart, eager assistance.** The interface creates opportunities for
-searching, organizating, and forming connections by using natural
-language intelligence and UI affordances. (Example: automatically
-suggesting related pages and allowing components to be dragged into any
-of them.)
+**Web and mobile publishing.** In addition to running a server on your
+CAS, we allow export of static HTML to be easily uploaded to any host.
 
 ## Next steps
 
-- Finalize data representation
-- File storage
-- RSS import
+- "Decks" UX design
+- File storage ([vault](https://github.com/greglook/vault/)?)
+- Define specification for sourced information
+- API & RSS import (Diigo, Instapaper)
 - Visual design
-- Convert client to React (better code organization and faster
+- Convert client to React or Om (better code organization and faster
   rendering)
-- Convert server to JVM (better offering of NLP libraries) 
-- Versioning
-- Explore automation features
+- Convert server to JVM (strong NLP libraries)
+- Search indexing
+- Page versioning
+- Suggested content
+- Static site export
