@@ -58,15 +58,4 @@ CAS, we allow export of static HTML to be easily uploaded to any host.
 
 ## Next steps
 
-- "Decks" UX design
-- File storage ([vault](https://github.com/greglook/vault/)?)
-- Define specification for sourced information
-- API & RSS import (Diigo, Instapaper)
-- Visual design
-- Convert client to React or Om (better code organization and faster
-  rendering)
-- Convert server to JVM (strong NLP libraries)
-- Search indexing
-- Page versioning
-- Suggested content
-- Static site export
+See [waffle.io/ryanmuller/pkb](https://waffle.io/ryanmuller/pkb)
