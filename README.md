@@ -3,6 +3,12 @@
 
 A note/reference/bookmark system tends to higher complexity. Sure, you can tag your notes, but then either (or both!) the tags themselves or notes within an individual tag will tend toward complexity. Our goal, simply stated, is a note system that tends to a leveled off complexity through always-improving organization. To be effective this will require designing and implementing UI-assisted manual processes as well as machine learning processes.
 
+## Background
+
+**Compressive file systems.** In his [Strange Loop 2014 talk](https://www.youtube.com/watch?v=lKXe3HUG2l4), Joe Armstrong described a *compressive file system* that would reduce the space taken by files with compressive similarity. For a "compressive note system", there are two extensions: 1) Compressive similarity can be extended from bytes to *concepts*. 2) Our notion of complexity is not measured in disk space but in *human computation*. For example, a note that is unintelligbly compressed to 50% that must be extracted and read in full is measured differently from one that is compressed to a half-length summary that I can scan before (or instead of) reading the full note. (The former has a compression of 0% and the latter ~50%.)
+
+**Sensemaking.** Only an *organized* note system has a chance of leveling off in complexity. While organization can be described as a process leading to an elegant *external* representation of concepts and relations, *sensemaking* is the other side of the same coin: a process leading to an elegant *internal* representation of concepts and relations. One cannot form a valid external representation of concepts and relations with out having made sense of them except by luck. However, it is with an manipulable external representation that internalized is most likely to happen. (What do we take from this? Are we inspired by evolutionary processes or other optimization techniques?)
+
 ## Usage
 
 Check out the demo on [pkb.herokuapp.com](http://pkb.herokuapp.com). It
