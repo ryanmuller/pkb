@@ -1,7 +1,7 @@
 [![Stories in Ready](https://badge.waffle.io/ryanmuller/pkb.png?label=ready&title=Ready)](https://waffle.io/ryanmuller/pkb)
 # pkb
 
-A note/reference/bookmark system tends to higher complexity. Sure, you can tag your notes, but then either (or both!) the tags themselves or notes within an individual tag will continue to grow at the same pace. Our goal, simply stated, is a note system that tends to a leveled off complexity through always-improving organization. To be effective this will require designing and implementing UI-assisted manual processes as well as machine learning processes.
+Our goal, simply stated, is a note system that levels off complexity through always-improving organization. To be effective this will require designing and implementing UI-assisted manual processes as well as machine learning processes.
 
 ## Background
 
