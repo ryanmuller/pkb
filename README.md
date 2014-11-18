@@ -1,11 +1,11 @@
 [![Stories in Ready](https://badge.waffle.io/ryanmuller/pkb.png?label=ready&title=Ready)](https://waffle.io/ryanmuller/pkb)
 # pkb
 
-Our goal, simply stated, is a note system that levels off complexity through always-improving organization. To be effective this will require designing and implementing UI-assisted manual processes as well as machine learning processes.
+Our goal, simply stated, is a note system that levels off complexity through always-improving organization.
 
 ## Background
 
-**Scientific collaboration.** How can we combine ideas whose complexities are beyond individual comprehension? Science is beginning to develop and apply systems for large-scale collaboration. We're investigating how this plays out with the individual partipant grappling with the space of ideas. From our perspective, the classic notebook is still the basic metaphor for this task, but we can amplify its presentation, interactive capabilities, and collaboration. Work with the federated wiki (see [Mike Caufield](http://hapgood.us/2014/11/06/federated-education-new-directions-in-digital-collaboration/)) is one inspiration for this digital tool.
+**Scientific collaboration.** How can we combine ideas whose complexities are beyond individual comprehension? Science is beginning to develop and apply systems for large-scale collaboration ([Reinventing Discovery](http://michaelnielsen.org/blog/reinventing-discovery/)). We're investigating how this plays out with the individual partipant grappling with the space of ideas. From our perspective, the classic notebook is still the basic metaphor for this task, but we can amplify its presentation, interactive capabilities, and collaboration. Work with the federated wiki (see [Mike Caufield](http://hapgood.us/2014/11/06/federated-education-new-directions-in-digital-collaboration/)) is one inspiration for this digital tool.
 
 **Compressive file systems.** In his [Strange Loop 2014 talk](https://www.youtube.com/watch?v=lKXe3HUG2l4), Joe Armstrong described a *compressive file system* that would reduce the space taken by files with compressive similarity. An easy way to incorporate this principle is to use content-addressable storage for data that we store immutably, such as quote from websites.
 
